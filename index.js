@@ -40,7 +40,7 @@ mqttClient.on("connect", async () => {
     const feeds = res.data;
     feeds.forEach((feed) => {
       const topic = `${ADAFRUIT_IO_USERNAME}/feeds/${feed.key}`;
-      console.log(topic)
+      console.log(topic);
       mqttClient.subscribe(topic);
     });
   } catch (e) {
@@ -54,6 +54,7 @@ io.on("connection", (socket) => {
 });
 
 mqttClient.on("message", (topic, message) => {
+  const createdAt = new Date();
   const data = JSON.parse(message.toString());
-  io.emit(topic, data);
+  io.emit(topic, data, createdAt);
 });
