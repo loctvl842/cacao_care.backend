@@ -5,7 +5,7 @@ const { init } = require("./socketio");
 
 const authRoute = require("./routes/auth");
 
-const PORT = 8400;
+const PORT = process.env.PORT || 8400;
 
 app.use(express.json());
 
