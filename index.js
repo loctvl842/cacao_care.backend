@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const { init } = require("./socketio");
+const { getMqttClient } = require("./mqtt-service");
 
 const authRoute = require("./routes/auth");
 

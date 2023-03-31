@@ -2,6 +2,7 @@ const router = require("express").Router();
 const mqtt = require("mqtt");
 const axios = require("axios");
 const socketio = require("../socketio");
+const mqttService = require("../mqtt-service");
 
 router.post("/login", async (req, res) => {
   let { adafruit, socketId } = req.body;
@@ -23,16 +24,18 @@ router.post("/login", async (req, res) => {
         const topic = `${adafruit.io_username}/feeds/${feed.key}`;
         mqttClient.subscribe(topic);
       });
-      mqttClient.on("message", (topic, message) => {
-        const createdAt = new Date();
-        const data = JSON.parse(message.toString());
-        io.emit(topic, data, createdAt);
-      });
       res.status(200).json({ success: true });
     } catch (e) {
       res.status(500).json("Internal server error.");
     }
   });
+
+  mqttClient.on("message", (topic, message) => {
+    const createdAt = new Date();
+    const data = JSON.parse(message.toString());
+    io.emit(topic, data, createdAt);
+  });
+
   mqttClient.on("error", (error) => {
     if (error.code === 5) {
       io.to(socketId).emit("error", "Invalid crediential.");
